@@ -28,7 +28,10 @@ import struct
 import re
 import stat
 import bz2
-import sqlitecachec
+try:
+    import sqlitecachec
+except ImportError:
+    pass
 
 # done to fix gzip randomly changing the checksum
 import gzip
