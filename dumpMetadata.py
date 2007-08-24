@@ -220,9 +220,12 @@ def byteranges(file):
     
 
 class MDError(exceptions.Exception):
-    def __init__(self, args=None):
+    def __init__(self, value=None):
         exceptions.Exception.__init__(self)
-        self.args = args
+        self.value = value
+    
+    def __str__(self):
+        return self.value
 
 
 

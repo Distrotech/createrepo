@@ -230,7 +230,7 @@ class MetaDataGenerator:
                 #scan rpm files
                 nodes = self._getNodes(file, directory, current)
             if nodes is None:
-                return
+                continue
             basenode, filenode, othernode = nodes
             del nodes
             if not self.cmds['quiet']:
