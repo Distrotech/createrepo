@@ -406,7 +406,9 @@ class RpmMetaData:
         except TypeError:
             del u  # move on to the next method
         else:
-            return u.keys()
+            ret = u.keys()
+            ret.sort()
+            return ret
     
         # We can't hash all the elements.  Second fastest is to sort,
         # which brings the equal elements together; then duplicates are
@@ -503,7 +505,7 @@ class RpmMetaData:
             for glob in self.filerc:
                 if glob.match(item):
                     returns[item] = 1
-        return returns
+        return returns.keys()
                     
     def usefulGhosts(self):
         """search for useful ghost file names"""
@@ -514,7 +516,7 @@ class RpmMetaData:
             for glob in self.filerc:
                 if glob.match(item):
                     returns[item] = 1
-        return returns
+        return returns.keys()
 
 
     def usefulDirs(self):
@@ -712,16 +714,22 @@ def generateXML(doc, node, formatns, rpmObj, sumtype):
             if prereq == 1:
                 entry.newProp('pre', str(prereq))
         
-    for file in rpmObj.usefulFiles():
+    ff = rpmObj.usefulFiles()
+    ff.sort()
+    for file in ff:
         files = format.newChild(None, 'file', None)
         file = utf8String(file)
         files.addContent(file)
-    for directory in rpmObj.usefulDirs():
+    ff = rpmObj.usefulDirs()
+    ff.sort()
+    for directory in ff:
         files = format.newChild(None, 'file', None)
         directory = utf8String(directory)
         files.addContent(directory)
         files.newProp('type', 'dir')
-    for directory in rpmObj.usefulGhosts():
+    ff = rpmObj.usefulGhosts()
+    ff.sort()
+    for directory in ff:
         files = format.newChild(None, 'file', None)
         directory = utf8String(directory)
         files.addContent(directory)
