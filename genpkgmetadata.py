@@ -65,6 +65,8 @@ def usage(retval=1):
      -p, --pretty = output xml files in pretty format.
      --update = update existing metadata (if present)
      -d, --database = generate the sqlite databases.
+     --skip-stat = skip the stat() call on a --update, assumes if the name
+                   is the same then the file is the same.
     """)
 
     sys.exit(retval)
@@ -151,6 +153,9 @@ class MetaDataGenerator:
                 'verbose' : self.cmds['verbose'],
                 'pkgdir' : os.path.normpath(os.path.join(self.cmds['basedir'], directory))
             }
+            if self.cmds['skip_stat']:
+                opts['do_stat'] = False
+                
             #and scan the old repo
             self.oldData = readMetadata.MetadataIndex(self.cmds['outputdir'],
                                                       basefile, flfile, otherfile, opts)
@@ -434,6 +439,7 @@ def parseArgs(args):
     cmds['file-pattern-match'] = ['.*bin\/.*', '^\/etc\/.*', '^\/usr\/lib\/sendmail$']
     cmds['dir-pattern-match'] = ['.*bin\/.*', '^\/etc\/.*']
     cmds['skip-symlinks'] = False
+    cmds['skip_stat'] = False
     cmds['pkglist'] = []
 
     try:
@@ -442,7 +448,8 @@ def parseArgs(args):
                                                                   'baseurl=', 'groupfile=', 'checksum=',
                                                                   'version', 'pretty', 'split', 'outputdir=',
                                                                   'noepoch', 'checkts', 'database', 'update',
-                                                                  'skip-symlinks', 'pkglist='])
+                                                                  'skip-symlinks', 'pkglist=',
+                                                                  'skip-stat'])
     except getopt.error, e:
         errorprint(_('Options Error: %s.') % e)
         usage()
@@ -514,6 +521,8 @@ def parseArgs(args):
                 cmds['database'] = True
             elif arg in ['-S', '--skip-symlinks']:
                 cmds['skip-symlinks'] = True
+            elif arg == '--skip-stat':
+                cmds['skip_stat'] = True
             elif arg in ['-i', '--pkglist']:
                 cmds['pkglist'] = a
                                 
